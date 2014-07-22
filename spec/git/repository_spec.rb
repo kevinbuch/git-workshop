@@ -1,10 +1,11 @@
 require 'git/repository'
 
 describe Repository do
-  let(:repo) { Repository.new 'shaq' }
+  let(:repo) { Repository.new 'name', 'owner' }
 
-  it 'has an owner' do
-    expect(repo.owner).to eq 'shaq'
+  it 'has an owner and a name' do
+    expect(repo.name).to eq 'name'
+    expect(repo.owner).to eq 'owner'
   end
 
   it 'starts with an empty list of commits and no files' do
