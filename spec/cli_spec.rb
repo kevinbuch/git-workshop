@@ -1,7 +1,4 @@
-require 'git/repository'
-require 'git/file'
-require 'api'
-require 'pry'
+require 'spec_helper'
 
 describe Git do
   before :each do
@@ -26,7 +23,7 @@ describe Git do
   describe '#add' do
     it 'starts tracking files' do
       repo = Git::init('repo_name', 'owner')
-      file = Git::File.new 'path', 'content', 'repo_name'
+      file = Git::File.new '/repo_name/path', 'content'
 
       expect(repo.working_directory[:untracked].length).to be 1
       expect(repo.working_directory[:tracked][:staged].length).to be 0

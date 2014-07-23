@@ -1,4 +1,4 @@
-require 'git/tree'
+require 'spec_helper'
 
 describe Git::Tree do
   it 'has many git files' do

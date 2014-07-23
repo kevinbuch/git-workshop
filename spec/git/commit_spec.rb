@@ -1,4 +1,4 @@
-require 'git/commit'
+require 'spec_helper'
 
 describe Git::Commit do
   let(:author) { 'snoop' }

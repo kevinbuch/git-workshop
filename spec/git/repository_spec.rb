@@ -1,4 +1,4 @@
-require 'git/repository'
+require 'spec_helper'
 
 describe Repository do
   let(:repo) { Repository.new 'name', 'owner' }
