@@ -3,6 +3,7 @@ module Git
     attr_accessor :path, :content, :history
 
     def initialize(path, content)
+      raise StandardError if path[0] != '/'
       self.path = parse_filepath path
       self.content = content
       self.history = [content]

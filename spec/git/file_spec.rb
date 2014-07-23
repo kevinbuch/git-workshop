@@ -17,4 +17,8 @@ describe Git::File do
 
     expect(file.history.length).to be 2
   end
+
+  it 'only accepts filepaths that start with a slash' do
+    expect(Git::File.new('invalid_filepath', 'content')).to raise_error
+  end
 end
