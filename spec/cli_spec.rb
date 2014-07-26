@@ -30,11 +30,36 @@ describe Git do
       expect(repo.working_directory[:tracked][:unstaged].length).to be 0
 
       Git::add(file, repo)
-      repo = Git::repositories.first
 
       expect(repo.working_directory[:untracked].length).to be 0
       expect(repo.working_directory[:tracked][:staged].length).to be 1
       expect(repo.working_directory[:tracked][:unstaged].length).to be 0
+    end
+  end
+
+  describe '#commit' do
+    it 'adds a snapshot of files to the repo' do
+      repo = Git::init('repo_name', 'owner')
+      file1 = Git::File.new '/repo_name/path1', 'content1'
+      file2 = Git::File.new '/repo_name/path2', 'content2'
+
+      Git::add(file1, repo)
+      Git::add(file2, repo)
+      Git::commit(repo)
+
+      expect(repo.commits.length).to be 1
+    end
+
+    it 'clears the staging area' do
+      repo = Git::init('repo_name', 'owner')
+      file1 = Git::File.new '/repo_name/path1', 'content1'
+      file2 = Git::File.new '/repo_name/path2', 'content2'
+
+      Git::add(file1, repo)
+      Git::add(file2, repo)
+      Git::commit(repo)
+
+      expect(repo.working_directory[:tracked][:staged]).to be_empty
     end
   end
 end
