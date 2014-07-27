@@ -13,6 +13,22 @@ describe Git do
     expect(Git::repositories).to be_empty
   end
 
+  it 'knows what the current repo is' do
+    first_repo = Git::init('first', owner)
+    expect(Git::current_repo).to eq first_repo
+
+    second_repo = Git::init('second', owner)
+    expect(Git::current_repo).to eq second_repo
+  end
+
+  it 'can switch the current repo' do
+    first_repo = Git::init('first', owner)
+    Git::init('second', owner)
+    Git::cd('first')
+
+    expect(Git::current_repo).to eq first_repo
+  end
+
   describe '#init' do
     it 'creates a new repository' do
       repo = Git::init(repo_name, owner)
@@ -33,7 +49,7 @@ describe Git do
       expect(repo.working_directory[:tracked][:staged].length).to be 0
       expect(repo.working_directory[:tracked][:unstaged].length).to be 0
 
-      Git::add(file, repo)
+      Git::add(file)
 
       expect(repo.working_directory[:untracked].length).to be 0
       expect(repo.working_directory[:tracked][:staged].length).to be 1
@@ -45,8 +61,8 @@ describe Git do
     it 'adds a snapshot of files to the repo' do
       repo = Git::init(repo_name, owner)
 
-      Git::add(file, repo)
-      Git::commit(repo)
+      Git::add(file)
+      Git::commit
 
       expect(repo.commits.length).to be 1
     end
@@ -54,8 +70,19 @@ describe Git do
     it 'clears the staging area' do
       repo = Git::init(repo_name, owner)
 
-      Git::add(file, repo)
-      Git::commit(repo)
+      Git::add(file)
+      Git::commit
+
+      expect(repo.working_directory[:tracked][:staged]).to be_empty
+    end
+  end
+
+  describe '#checkout' do
+    it 'clears the unstaged changes' do
+      repo = Git::init(repo_name, owner)
+
+      Git::add(file)
+      Git::checkout(repo)
 
       expect(repo.working_directory[:tracked][:staged]).to be_empty
     end
