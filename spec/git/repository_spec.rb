@@ -15,29 +15,48 @@ describe Repository do
     expect(repo.working_directory[:untracked]).to be_empty
   end
 
-  it 'starts with a master branch that has no commits' do
-    expect(repo.branches[:master]).to be_nil
+  describe 'branches' do
+    it 'starts with a master branch that has no commits' do
+      expect(repo.branches[:master]).to be_nil
+    end
+
+    it 'has a current branch' do
+      expect(repo.current_branch).to eq :master
+    end
+
+    it 'can create a new branch' do
+      repo.new_branch 'feature'
+
+      expect(repo.branches).to include :master
+      expect(repo.branches).to include :feature
+    end
   end
 
-  xit 'can add commits to the current branch' do
-    first_commit = double 'first_commit'
-    second_commit = double 'second_commit'
+  describe 'adding commits' do
+    let(:first_commit)  { Git::Commit.new [], }
+    let(:second_commit) { Git::Commit.new }
 
-    repo.add_commit(first_commit)
-    repo.add_commit(second_commit)
+    it 'keeps track of all commits' do
+      repo.add_commit(first_commit)
+      repo.add_commit(second_commit)
 
-    expect(repo.commits[repo.current_branch]).to include first_commit
-    expect(repo.commits[repo.current_branch]).to include second_commit
-  end
+      expect(repo.commits).to include first_commit
+      expect(repo.commits).to include second_commit
+    end
 
-  it 'has a current branch' do
-    expect(repo.current_branch).to eq :master
-  end
+    it 'adds commits to the current branch' do
+      repo.add_commit(first_commit)
+      expect(repo.branches[:master]).to eq first_commit
 
-  it 'can create a new branch' do
-    repo.new_branch 'feature'
+      repo.add_commit(second_commit)
+      expect(repo.branches[:master]).to eq second_commit
+    end
 
-    expect(repo.branches).to include :master
-    expect(repo.branches).to include :feature
+    it 'keeps track of the parent commit' do
+      repo.add_commit(first_commit)
+      repo.add_commit(second_commit)
+
+      expect(second_commit.parents).to include first_commit
+    end
   end
 end

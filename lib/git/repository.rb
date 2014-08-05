@@ -18,6 +18,7 @@ class Repository
 
   def add_commit(commit)
     commits << commit
+    branches[:master] = commit
   end
 
   def new_branch(name)
