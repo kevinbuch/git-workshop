@@ -18,16 +18,16 @@ module Git
 
     def commit
       commit_files = current_repo.working_directory[:tracked][:staged]
-      self.clear_staged_files
-      current_repo.commits << commit_files
+      clear_staged_files
+      current_repo.add_commit commit_files
     end
 
     def checkout(repo)
-      self.clear_staged_files
+      clear_staged_files
     end
 
     def cd(repo_name)
-      self.current_repo = repositories.select { |repo| repo.name == repo_name }.first
+      self.current_repo = repositories.find { |repo| repo.name == repo_name }
     end
 
     def clear_staged_files

@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Git do
   let(:owner)     { 'owner' }
   let(:repo_name) { 'repo_name' }
+  let(:repo)      { Git::init(repo_name, owner) }
   let(:file)      { Git::File.new "/#{repo_name}/file/path", owner }
 
   before :each do
@@ -58,32 +59,23 @@ describe Git do
   end
 
   describe '#commit' do
-    it 'adds a snapshot of files to the repo' do
-      repo = Git::init(repo_name, owner)
-
+    before :each do
+      repo
       Git::add(file)
       Git::commit
+    end
 
+    it 'adds a snapshot of files to the repo' do
       expect(repo.commits.length).to be 1
     end
 
     it 'clears the staging area' do
-      repo = Git::init(repo_name, owner)
-
-      Git::add(file)
-      Git::commit
-
       expect(repo.working_directory[:tracked][:staged]).to be_empty
     end
   end
 
   describe '#checkout' do
     it 'clears the unstaged changes' do
-      repo = Git::init(repo_name, owner)
-
-      Git::add(file)
-      Git::checkout(repo)
-
       expect(repo.working_directory[:tracked][:staged]).to be_empty
     end
   end

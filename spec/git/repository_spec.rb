@@ -14,4 +14,30 @@ describe Repository do
     expect(repo.working_directory[:tracked][:unstaged]).to be_empty
     expect(repo.working_directory[:untracked]).to be_empty
   end
+
+  it 'starts with a master branch that has no commits' do
+    expect(repo.branches[:master]).to be_nil
+  end
+
+  xit 'can add commits to the current branch' do
+    first_commit = double 'first_commit'
+    second_commit = double 'second_commit'
+
+    repo.add_commit(first_commit)
+    repo.add_commit(second_commit)
+
+    expect(repo.commits[repo.current_branch]).to include first_commit
+    expect(repo.commits[repo.current_branch]).to include second_commit
+  end
+
+  it 'has a current branch' do
+    expect(repo.current_branch).to eq :master
+  end
+
+  it 'can create a new branch' do
+    repo.new_branch 'feature'
+
+    expect(repo.branches).to include :master
+    expect(repo.branches).to include :feature
+  end
 end
