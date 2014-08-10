@@ -53,13 +53,13 @@ describe Git do
     end
 
     it 'clears the staging area' do
-      expect(repo.working_directory[:tracked][:staged]).to be_empty
+      expect(repo.working_directory[:staged]).to be_empty
     end
   end
 
   describe '#checkout' do
     it 'clears the unstaged changes' do
-      expect(repo.working_directory[:tracked][:staged]).to be_empty
+      expect(repo.working_directory[:staged]).to be_empty
     end
   end
 end

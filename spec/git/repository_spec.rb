@@ -10,8 +10,8 @@ describe Repository do
 
   it 'starts with an empty list of commits and no files' do
     expect(repo.commits).to be_empty
-    expect(repo.working_directory[:tracked][:staged]).to be_empty
-    expect(repo.working_directory[:tracked][:unstaged]).to be_empty
+    expect(repo.working_directory[:staged]).to be_empty
+    expect(repo.working_directory[:unstaged]).to be_empty
     expect(repo.working_directory[:untracked]).to be_empty
   end
 
@@ -19,14 +19,14 @@ describe Repository do
     it 'starts tracking files' do
       file = repo.new_file '/file/path', 'content'
 
-      expect(repo.working_directory[:tracked][:staged].length).to be 0
-      expect(repo.working_directory[:tracked][:unstaged].length).to be 0
+      expect(repo.working_directory[:staged].length).to be 0
+      expect(repo.working_directory[:unstaged].length).to be 0
       expect(repo.working_directory[:untracked].length).to be 1
 
       repo.add file
 
-      expect(repo.working_directory[:tracked][:staged].length).to be 1
-      expect(repo.working_directory[:tracked][:unstaged].length).to be 0
+      expect(repo.working_directory[:staged].length).to be 1
+      expect(repo.working_directory[:unstaged].length).to be 0
       expect(repo.working_directory[:untracked].length).to be 0
     end
 
@@ -68,7 +68,7 @@ describe Repository do
 
     it 'records the contents of tracked files so it can determine when they are modified' do
       path = '/first/file'
-      repo.working_directory[:tracked][:staged] = [Git::File.new(path, 'content')]
+      repo.working_directory[:staged] = [Git::File.new(path, 'content')]
       repo.commit
 
       expect(repo.previous_commit_contents[path]).to eq 'content'

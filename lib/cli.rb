@@ -13,11 +13,11 @@ module Git
 
     def add(file)
       current_repo.working_directory[:untracked].delete file
-      current_repo.working_directory[:tracked][:staged].push file
+      current_repo.working_directory[:staged].push file
     end
 
     def commit
-      commit_files = current_repo.working_directory[:tracked][:staged]
+      commit_files = current_repo.working_directory[:staged]
       clear_staged_files
       current_repo.add_commit commit_files
     end
@@ -31,7 +31,7 @@ module Git
     end
 
     def clear_staged_files
-      current_repo.working_directory[:tracked][:staged] = []
+      current_repo.working_directory[:staged] = []
     end
 
   end

@@ -8,10 +8,8 @@ class Repository
     self.commits = []
 
     self.working_directory = {
-      :tracked => {
-        :staged => [],
-        :unstaged => []
-      },
+      :staged => [],
+      :unstaged => [],
       :untracked => []
     }
   end
@@ -25,12 +23,12 @@ class Repository
   def add(file)
     if working_directory[:untracked].include? file
       working_directory[:untracked].delete file
-      working_directory[:tracked][:staged] << file
+      working_directory[:staged] << file
     end
   end
 
   def commit
-    tracked_files = working_directory[:tracked][:staged] + working_directory[:tracked][:unstaged]
+    tracked_files = working_directory[:staged] + working_directory[:unstaged]
     contents = {}
     tracked_files.map do |file|
       contents[file.path] = file.content
