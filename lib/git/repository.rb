@@ -1,5 +1,5 @@
 class Repository
-  attr_accessor :owner, :branches, :commits, :working_directory, :name
+  attr_accessor :owner, :branches, :commits, :working_directory, :name, :previous_commit_contents
 
   def initialize(name, owner)
     self.name = name
@@ -29,6 +29,16 @@ class Repository
     end
   end
 
+  def commit
+    tracked_files = working_directory[:tracked][:staged] + working_directory[:tracked][:unstaged]
+    contents = {}
+    tracked_files.map do |file|
+      contents[file.path] = file.content
+    end
+
+    self.previous_commit_contents = contents
+  end
+
   def add_commit(commit)
     commits << commit
     branches[:master] = commit
@@ -40,5 +50,9 @@ class Repository
 
   def current_branch
     :master
+  end
+
+  def modified_files
+    []
   end
 end
