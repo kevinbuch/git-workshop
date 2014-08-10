@@ -15,6 +15,22 @@ describe Repository do
     expect(repo.working_directory[:untracked]).to be_empty
   end
 
+  describe '#add' do
+    it 'starts tracking files' do
+      file = repo.new_file '/file/path', 'content'
+
+      expect(repo.working_directory[:tracked][:staged].length).to be 0
+      expect(repo.working_directory[:tracked][:unstaged].length).to be 0
+      expect(repo.working_directory[:untracked].length).to be 1
+
+      repo.add file
+
+      expect(repo.working_directory[:tracked][:staged].length).to be 1
+      expect(repo.working_directory[:tracked][:unstaged].length).to be 0
+      expect(repo.working_directory[:untracked].length).to be 0
+    end
+  end
+
   describe 'branches' do
     it 'starts with a master branch that has no commits' do
       expect(repo.branches[:master]).to be_nil

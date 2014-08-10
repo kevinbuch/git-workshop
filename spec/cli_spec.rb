@@ -41,23 +41,6 @@ describe Git do
     end
   end
 
-  describe '#add' do
-    it 'starts tracking files' do
-      repo = Git::init(repo_name, owner)
-      file = Git::File.new '/repo_name/path', 'content'
-
-      expect(repo.working_directory[:untracked].length).to be 1
-      expect(repo.working_directory[:tracked][:staged].length).to be 0
-      expect(repo.working_directory[:tracked][:unstaged].length).to be 0
-
-      Git::add(file)
-
-      expect(repo.working_directory[:untracked].length).to be 0
-      expect(repo.working_directory[:tracked][:staged].length).to be 1
-      expect(repo.working_directory[:tracked][:unstaged].length).to be 0
-    end
-  end
-
   describe '#commit' do
     before :each do
       repo

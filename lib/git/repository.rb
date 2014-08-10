@@ -16,6 +16,19 @@ class Repository
     }
   end
 
+  def new_file(path, content)
+    file = Git::File.new(path, content)
+    working_directory[:untracked] << file
+    file
+  end
+
+  def add(file)
+    if working_directory[:untracked].include? file
+      working_directory[:untracked].delete file
+      working_directory[:tracked][:staged] << file
+    end
+  end
+
   def add_commit(commit)
     commits << commit
     branches[:master] = commit
