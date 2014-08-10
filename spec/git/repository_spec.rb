@@ -58,13 +58,6 @@ describe Repository do
   end
 
   describe '#commit' do
-    let(:tree) {
-      [
-       Git::File.new('/first/file', 'content'),
-       Git::File.new('/second/file', 'content')
-      ]
-    }
-
     it 'records the contents of tracked files so it can determine when they are modified' do
       path = '/first/file'
       repo.working_directory[:staged] = [Git::File.new(path, 'content')]
@@ -78,6 +71,20 @@ describe Repository do
       commit = repo.commit 'author'
 
       expect(repo.commits).to include commit
+    end
+
+    it 'unstages files after the commit is created' do
+      repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
+
+      expect(repo.working_directory[:staged].length).to be 1
+      expect(repo.working_directory[:unstaged].length).to be 0
+      expect(repo.working_directory[:untracked].length).to be 0
+
+      repo.commit 'author'
+
+      expect(repo.working_directory[:staged].length).to be 0
+      expect(repo.working_directory[:unstaged].length).to be 1
+      expect(repo.working_directory[:untracked].length).to be 0
     end
 
     xit 'adds commits to the current branch' do

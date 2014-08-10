@@ -1,10 +1,11 @@
 class Repository
-  attr_accessor :owner, :branches, :commits, :working_directory, :name, :previous_commit_contents
+  attr_accessor :owner, :branches, :commits, :working_directory, :name, :previous_commit_contents, :current_branch
 
   def initialize(name, owner)
     self.name = name
     self.owner = owner
     self.branches = {:master => nil}
+    self.current_branch = :master
     self.commits = []
 
     self.working_directory = {
@@ -37,15 +38,13 @@ class Repository
     self.previous_commit_contents = contents
     commit = Git::Commit.new(working_directory[:staged], author)
     commits << commit
+    working_directory[:unstaged] = working_directory[:staged]
+    working_directory[:staged] = []
     commit
   end
 
   def new_branch(name)
     branches[name.to_sym] = []
-  end
-
-  def current_branch
-    :master
   end
 
   def modified_files
