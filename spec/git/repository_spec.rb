@@ -33,6 +33,7 @@ describe Repository do
     xit 'knows which files have been modified' do
       file = repo.new_file '/file/path', 'content'
       repo.add file
+      repo.commit
       file.content = 'new content'
 
       expect(repo.modified_files).to include file
@@ -63,26 +64,20 @@ describe Repository do
        Git::File.new('/second/file', 'content')
       ]
     }
-    let(:first_commit)  { Git::Commit.new tree, 'author' }
-    let(:second_commit) { Git::Commit.new tree << Git::File.new('/third/file', 'content'), 'author' }
 
     it 'records the contents of tracked files so it can determine when they are modified' do
       path = '/first/file'
       repo.working_directory[:staged] = [Git::File.new(path, 'content')]
-      repo.commit
+      repo.commit 'author'
 
       expect(repo.previous_commit_contents[path]).to eq 'content'
     end
 
-    xit 'creates a commit of the staged files' do
-    end
+    it 'keeps track of all commits' do
+      repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
+      commit = repo.commit 'author'
 
-    xit 'keeps track of all commits' do
-      repo.add_commit(first_commit)
-      repo.add_commit(second_commit)
-
-      expect(repo.commits).to include first_commit
-      expect(repo.commits).to include second_commit
+      expect(repo.commits).to include commit
     end
 
     xit 'adds commits to the current branch' do

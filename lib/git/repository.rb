@@ -27,7 +27,7 @@ class Repository
     end
   end
 
-  def commit
+  def commit(author)
     tracked_files = working_directory[:staged] + working_directory[:unstaged]
     contents = {}
     tracked_files.map do |file|
@@ -35,11 +35,9 @@ class Repository
     end
 
     self.previous_commit_contents = contents
-  end
-
-  def add_commit(commit)
+    commit = Git::Commit.new(working_directory[:staged], author)
     commits << commit
-    branches[:master] = commit
+    commit
   end
 
   def new_branch(name)

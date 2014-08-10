@@ -40,26 +40,4 @@ describe Git do
       expect(Git::repositories.length).to be 1
     end
   end
-
-  describe '#commit' do
-    before :each do
-      repo
-      Git::add(file)
-      Git::commit
-    end
-
-    it 'adds a snapshot of files to the repo' do
-      expect(repo.commits.length).to be 1
-    end
-
-    it 'clears the staging area' do
-      expect(repo.working_directory[:staged]).to be_empty
-    end
-  end
-
-  describe '#checkout' do
-    it 'clears the unstaged changes' do
-      expect(repo.working_directory[:staged]).to be_empty
-    end
-  end
 end
