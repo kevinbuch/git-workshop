@@ -48,6 +48,8 @@ class Repository
   end
 
   def modified_files
-    []
+    working_directory[:unstaged].select do |file|
+      file.content != previous_commit_contents[file.path]
+    end
   end
 end

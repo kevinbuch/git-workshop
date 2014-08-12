@@ -30,10 +30,10 @@ describe Repository do
       expect(repo.working_directory[:untracked].length).to be 0
     end
 
-    xit 'knows which files have been modified' do
+    it 'knows which files have been modified' do
       file = repo.new_file '/file/path', 'content'
       repo.add file
-      repo.commit
+      repo.commit 'author'
       file.content = 'new content'
 
       expect(repo.modified_files).to include file
