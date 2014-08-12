@@ -40,6 +40,8 @@ class Repository
     commits << commit
     working_directory[:unstaged] = working_directory[:staged]
     working_directory[:staged] = []
+    commit.parents << branches[current_branch]
+    branches[current_branch] = commit
     commit
   end
 

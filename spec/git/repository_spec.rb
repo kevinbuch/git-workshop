@@ -87,17 +87,21 @@ describe Repository do
       expect(repo.working_directory[:untracked].length).to be 0
     end
 
-    xit 'adds commits to the current branch' do
-      repo.add_commit(first_commit)
-      expect(repo.branches[:master]).to eq first_commit
+    it 'adds commits to the current branch' do
+      repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
+      commit = repo.commit 'author'
 
-      repo.add_commit(second_commit)
-      expect(repo.branches[:master]).to eq second_commit
+      expect(repo.branches[:master]).to eq commit
+
+      newer_commit = repo.commit 'author'
+      expect(repo.branches[:master]).to eq newer_commit
     end
 
-    xit 'keeps track of the parent commit' do
-      repo.add_commit(first_commit)
-      repo.add_commit(second_commit)
+    it 'keeps track of the parent commit' do
+      first_commit = double 'commit'
+      repo.branches[:master] = first_commit
+      repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
+      second_commit = repo.commit 'author'
 
       expect(second_commit.parents).to include first_commit
     end
