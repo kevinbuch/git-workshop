@@ -21,9 +21,11 @@ class Repository
     file
   end
 
-  def add(file)
-    if working_directory[:untracked].include? file
+  def add(*files)
+    files.each do |file|
       working_directory[:untracked].delete file
+      working_directory[:unstaged].delete file
+
       working_directory[:staged] << file
     end
   end
@@ -53,6 +55,23 @@ class Repository
     branches[name.to_sym] = []
   end
 
+  def status
+    branch = "On branch #{self.HEAD.to_s}\n"
+
+    changes = ''
+    if modified_files.empty? and working_directory[:staged].empty?
+      changes = "nothing to commit, working directory clean"
+    else
+      if modified_files.any?
+        changes << "Changes not staged for commit:\n\t#{modified_files.map(&:path).join("\n\t")}"
+      end
+      if working_directory[:staged].any?
+        changes << "Changes to be committed:\n\t#{working_directory[:staged].map(&:path).join("\n\t")}"
+      end
+    end
+
+    branch + changes
+  end
 
   def modified_files
     working_directory[:unstaged].select do |file|

@@ -38,6 +38,23 @@ describe Repository do
 
       expect(repo.modified_files).to include file
     end
+
+    it 'stages a file' do
+      file = repo.new_file '/file/path', 'content'
+      repo.add file
+      repo.commit 'author'
+      file.content = 'new content'
+
+      expect(repo.working_directory[:staged].length).to be 0
+      expect(repo.working_directory[:unstaged].length).to be 1
+      expect(repo.working_directory[:untracked].length).to be 0
+
+      repo.add file
+
+      expect(repo.working_directory[:staged].length).to be 1
+      expect(repo.working_directory[:unstaged].length).to be 0
+      expect(repo.working_directory[:untracked].length).to be 0
+    end
   end
 
   describe '#branch' do
@@ -110,6 +127,37 @@ describe Repository do
       repo.branch :new_branch
       repo.checkout :new_branch
       expect(repo.HEAD).to eq :new_branch
+    end
+  end
+
+  describe '#status' do
+    it 'shows the current branch' do
+      expect(repo.status).to include 'On branch master'
+      repo.branch :new_branch
+      repo.checkout :new_branch
+      expect(repo.status).to include 'On branch new_branch'
+    end
+
+    it 'shows when the working directory is clean' do
+      expect(repo.status).to include 'nothing to commit, working directory clean'
+    end
+
+    it 'shows modified files' do
+      file1 = repo.new_file '/file1/path', 'content'
+      file2 = repo.new_file '/file2/path', 'content'
+      repo.add file1, file2
+      repo.commit 'author'
+      file1.content = 'new content 1'
+      file2.content = 'new content 2'
+
+      expect(repo.status).to include "Changes not staged for commit:"
+      expect(repo.status).to include file1.path, file2.path
+      expect(repo.status).to include file2.path
+
+      repo.add file1, file2
+      expect(repo.status).to include "Changes to be committed:"
+      expect(repo.status).to include file1.path
+      expect(repo.status).to include file2.path
     end
   end
 end
