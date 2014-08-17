@@ -40,17 +40,14 @@ describe Repository do
     end
   end
 
-  describe 'branches' do
-    it 'starts with a master branch that has no commits' do
+  describe '#branch' do
+    it 'starts on a master branch that has no commits' do
+      expect(repo.HEAD).to eq :master
       expect(repo.branches[:master]).to be_nil
     end
 
-    it 'has a current branch' do
-      expect(repo.current_branch).to eq :master
-    end
-
     it 'can create a new branch' do
-      repo.new_branch 'feature'
+      repo.branch 'feature'
 
       expect(repo.branches).to include :master
       expect(repo.branches).to include :feature
@@ -104,6 +101,15 @@ describe Repository do
       second_commit = repo.commit 'author'
 
       expect(second_commit.parents).to include first_commit
+    end
+  end
+
+  describe '#checkout' do
+    it 'changes the current branch' do
+      expect(repo.HEAD).to eq :master
+      repo.branch :new_branch
+      repo.checkout :new_branch
+      expect(repo.HEAD).to eq :new_branch
     end
   end
 end

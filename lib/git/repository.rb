@@ -1,11 +1,11 @@
 class Repository
-  attr_accessor :owner, :branches, :commits, :working_directory, :name, :previous_commit_contents, :current_branch
+  attr_accessor :owner, :branches, :commits, :working_directory, :name, :previous_commit_contents, :HEAD
 
   def initialize(name, owner)
     self.name = name
     self.owner = owner
     self.branches = {:master => nil}
-    self.current_branch = :master
+    self.HEAD = :master
     self.commits = []
 
     self.working_directory = {
@@ -40,14 +40,19 @@ class Repository
     commits << commit
     working_directory[:unstaged] = working_directory[:staged]
     working_directory[:staged] = []
-    commit.parents << branches[current_branch]
-    branches[current_branch] = commit
+    commit.parents << branches[self.HEAD]
+    branches[self.HEAD] = commit
     commit
   end
 
-  def new_branch(name)
+  def checkout(branch)
+    self.HEAD = branch
+  end
+
+  def branch(name)
     branches[name.to_sym] = []
   end
+
 
   def modified_files
     working_directory[:unstaged].select do |file|
