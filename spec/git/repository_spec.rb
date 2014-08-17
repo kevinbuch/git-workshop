@@ -10,24 +10,24 @@ describe Repository do
 
   it 'starts with an empty list of commits and no files' do
     expect(repo.commits).to be_empty
-    expect(repo.working_directory[:staged]).to be_empty
-    expect(repo.working_directory[:unstaged]).to be_empty
-    expect(repo.working_directory[:untracked]).to be_empty
+    expect(repo.staged).to be_empty
+    expect(repo.unstaged).to be_empty
+    expect(repo.untracked).to be_empty
   end
 
   describe '#add' do
     it 'starts tracking files' do
       file = repo.new_file '/file/path', 'content'
 
-      expect(repo.working_directory[:staged].length).to be 0
-      expect(repo.working_directory[:unstaged].length).to be 0
-      expect(repo.working_directory[:untracked].length).to be 1
+      expect(repo.staged.length).to be 0
+      expect(repo.unstaged.length).to be 0
+      expect(repo.untracked.length).to be 1
 
       repo.add file
 
-      expect(repo.working_directory[:staged].length).to be 1
-      expect(repo.working_directory[:unstaged].length).to be 0
-      expect(repo.working_directory[:untracked].length).to be 0
+      expect(repo.staged.length).to be 1
+      expect(repo.unstaged.length).to be 0
+      expect(repo.untracked.length).to be 0
     end
 
     it 'knows which files have been modified' do
@@ -45,15 +45,15 @@ describe Repository do
       repo.commit 'author'
       file.content = 'new content'
 
-      expect(repo.working_directory[:staged].length).to be 0
-      expect(repo.working_directory[:unstaged].length).to be 1
-      expect(repo.working_directory[:untracked].length).to be 0
+      expect(repo.staged.length).to be 0
+      expect(repo.unstaged.length).to be 1
+      expect(repo.untracked.length).to be 0
 
       repo.add file
 
-      expect(repo.working_directory[:staged].length).to be 1
-      expect(repo.working_directory[:unstaged].length).to be 0
-      expect(repo.working_directory[:untracked].length).to be 0
+      expect(repo.staged.length).to be 1
+      expect(repo.unstaged.length).to be 0
+      expect(repo.untracked.length).to be 0
     end
   end
 
@@ -90,15 +90,15 @@ describe Repository do
     it 'unstages files after the commit is created' do
       repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
 
-      expect(repo.working_directory[:staged].length).to be 1
-      expect(repo.working_directory[:unstaged].length).to be 0
-      expect(repo.working_directory[:untracked].length).to be 0
+      expect(repo.staged.length).to be 1
+      expect(repo.unstaged.length).to be 0
+      expect(repo.untracked.length).to be 0
 
       repo.commit 'author'
 
-      expect(repo.working_directory[:staged].length).to be 0
-      expect(repo.working_directory[:unstaged].length).to be 1
-      expect(repo.working_directory[:untracked].length).to be 0
+      expect(repo.staged.length).to be 0
+      expect(repo.unstaged.length).to be 1
+      expect(repo.untracked.length).to be 0
     end
 
     it 'adds commits to the current branch' do

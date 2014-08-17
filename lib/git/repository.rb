@@ -17,30 +17,30 @@ class Repository
 
   def new_file(path, content)
     file = Git::File.new(path, content)
-    working_directory[:untracked] << file
+    untracked << file
     file
   end
 
   def add(*files)
     files.each do |file|
-      working_directory[:untracked].delete file
-      working_directory[:unstaged].delete file
+      untracked.delete file
+      unstaged.delete file
 
-      working_directory[:staged] << file
+      staged << file
     end
   end
 
   def commit(author)
-    tracked_files = working_directory[:staged] + working_directory[:unstaged]
+    tracked_files = staged + unstaged
     contents = {}
     tracked_files.map do |file|
       contents[file.path] = file.content
     end
 
     self.previous_commit_contents = contents
-    commit = Git::Commit.new(working_directory[:staged], author)
+    commit = Git::Commit.new(staged, author)
     commits << commit
-    working_directory[:unstaged] = working_directory[:staged]
+    working_directory[:unstaged] = staged
     working_directory[:staged] = []
     commit.parents << branches[self.HEAD]
     branches[self.HEAD] = commit
@@ -59,13 +59,13 @@ class Repository
     branch = "On branch #{self.HEAD.to_s}\n"
 
     changes = ''
-    if modified_files.empty? and working_directory[:staged].empty?
+    if modified_files.empty? and staged.empty?
       changes = "nothing to commit, working directory clean"
     else
       if modified_files.any?
         changes << "Changes not staged for commit:\n\t#{modified_files.map(&:path).join("\n\t")}"
       end
-      if working_directory[:staged].any?
+      if staged.any?
         changes << "Changes to be committed:\n\t#{working_directory[:staged].map(&:path).join("\n\t")}"
       end
     end
@@ -74,8 +74,20 @@ class Repository
   end
 
   def modified_files
-    working_directory[:unstaged].select do |file|
+    unstaged.select do |file|
       file.content != previous_commit_contents[file.path]
     end
+  end
+
+  def staged
+    working_directory[:staged]
+  end
+
+  def unstaged
+    working_directory[:unstaged]
+  end
+
+  def untracked
+    working_directory[:untracked]
   end
 end
