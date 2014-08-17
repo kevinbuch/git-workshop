@@ -1,10 +1,10 @@
 module Git
   class Commit
-    attr_accessor :tree, :author, :parents
+    attr_accessor :tree, :message, :parents
 
-    def initialize(tree, author, *parents)
+    def initialize(tree, message, *parents)
       self.tree = tree
-      self.author = author
+      self.message = message
       self.parents = parents
     end
   end

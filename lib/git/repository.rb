@@ -30,7 +30,7 @@ class Repository
     end
   end
 
-  def commit(author)
+  def commit(message)
     tracked_files = staged + unstaged
     contents = {}
     tracked_files.map do |file|
@@ -38,7 +38,7 @@ class Repository
     end
 
     self.previous_commit_contents = contents
-    commit = Git::Commit.new(staged, author)
+    commit = Git::Commit.new(staged, message)
     commits << commit
     working_directory[:unstaged] = staged
     working_directory[:staged] = []

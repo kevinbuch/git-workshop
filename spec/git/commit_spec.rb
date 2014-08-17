@@ -1,19 +1,19 @@
 require 'spec_helper'
 
 describe Git::Commit do
-  let(:author) { 'snoop' }
-  let(:tree) { double 'tree' }
+  let(:tree)          { ['files'] }
+  let(:message)       { 'this is a commit' }
   let(:parent_commit) { double 'commit' }
 
-  it 'has a git tree and author' do
-    commit = Git::Commit.new tree, author
+  it 'has a git tree and commit_message' do
+    commit = Git::Commit.new tree, message
 
     expect(commit.tree).to eq tree
-    expect(commit.author).to eq author
+    expect(commit.message).to eq message
   end
 
   it 'has a parent commit' do
-    commit = Git::Commit.new tree, author, parent_commit
+    commit = Git::Commit.new tree, message, parent_commit
 
     expect(commit.parents).to include parent_commit
   end

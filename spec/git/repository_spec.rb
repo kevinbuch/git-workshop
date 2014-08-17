@@ -33,7 +33,7 @@ describe Repository do
     it 'knows which files have been modified' do
       file = repo.new_file '/file/path', 'content'
       repo.add file
-      repo.commit 'author'
+      repo.commit 'commit message'
       file.content = 'new content'
 
       expect(repo.modified_files).to include file
@@ -42,7 +42,7 @@ describe Repository do
     it 'stages a file' do
       file = repo.new_file '/file/path', 'content'
       repo.add file
-      repo.commit 'author'
+      repo.commit 'commit message'
       file.content = 'new content'
 
       expect(repo.staged.length).to be 0
@@ -75,14 +75,14 @@ describe Repository do
     it 'records the contents of tracked files so it can determine when they are modified' do
       path = '/first/file'
       repo.working_directory[:staged] = [Git::File.new(path, 'content')]
-      repo.commit 'author'
+      repo.commit 'commit message'
 
       expect(repo.previous_commit_contents[path]).to eq 'content'
     end
 
     it 'keeps track of all commits' do
       repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
-      commit = repo.commit 'author'
+      commit = repo.commit 'commit message'
 
       expect(repo.commits).to include commit
     end
@@ -94,7 +94,7 @@ describe Repository do
       expect(repo.unstaged.length).to be 0
       expect(repo.untracked.length).to be 0
 
-      repo.commit 'author'
+      repo.commit 'commit message'
 
       expect(repo.staged.length).to be 0
       expect(repo.unstaged.length).to be 1
@@ -103,11 +103,11 @@ describe Repository do
 
     it 'adds commits to the current branch' do
       repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
-      commit = repo.commit 'author'
+      commit = repo.commit 'commit message'
 
       expect(repo.branches[:master]).to eq commit
 
-      newer_commit = repo.commit 'author'
+      newer_commit = repo.commit 'commit message 2'
       expect(repo.branches[:master]).to eq newer_commit
     end
 
@@ -115,7 +115,7 @@ describe Repository do
       first_commit = double 'commit'
       repo.branches[:master] = first_commit
       repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
-      second_commit = repo.commit 'author'
+      second_commit = repo.commit 'commit message'
 
       expect(second_commit.parents).to include first_commit
     end
@@ -142,11 +142,11 @@ describe Repository do
       expect(repo.status).to include 'nothing to commit, working directory clean'
     end
 
-    it 'shows modified files' do
+    it 'shows the status files' do
       file1 = repo.new_file '/file1/path', 'content'
       file2 = repo.new_file '/file2/path', 'content'
       repo.add file1, file2
-      repo.commit 'author'
+      repo.commit 'commit message'
       file1.content = 'new content 1'
       file2.content = 'new content 2'
 
@@ -158,6 +158,9 @@ describe Repository do
       expect(repo.status).to include "Changes to be committed:"
       expect(repo.status).to include file1.path
       expect(repo.status).to include file2.path
+
+      repo.commit 'commit message 2'
+      expect(repo.status).to include "nothing to commit"
     end
   end
 end
