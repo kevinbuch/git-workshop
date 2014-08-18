@@ -64,10 +64,17 @@ describe Repository do
     end
 
     it 'can create a new branch' do
-      repo.branch 'feature'
+      repo.branch :feature
 
       expect(repo.branches).to include :master
       expect(repo.branches).to include :feature
+    end
+
+    it 'can delete a branch with the :D option' do
+      repo.branch :feature
+      repo.branch :feature, :D
+
+      expect(repo.branches).not_to include :feature
     end
   end
 
@@ -126,6 +133,12 @@ describe Repository do
       expect(repo.HEAD).to eq :master
       repo.branch :new_branch
       repo.checkout :new_branch
+      expect(repo.HEAD).to eq :new_branch
+    end
+
+    it 'can create a branch with the :b option' do
+      repo.checkout :new_branch, :b
+      expect(repo.branches).to include :new_branch
       expect(repo.HEAD).to eq :new_branch
     end
   end

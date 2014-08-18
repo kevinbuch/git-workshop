@@ -47,12 +47,18 @@ class Repository
     commit
   end
 
-  def checkout(branch)
-    self.HEAD = branch
+  def checkout(branch_name, *options)
+    branch(branch_name) if options.include?(:b)
+
+    self.HEAD = branch_name
   end
 
-  def branch(name)
-    branches[name.to_sym] = []
+  def branch(name, *options)
+    if options.include?(:D)
+      branches.delete name
+    else
+      branches[name] = []
+    end
   end
 
   def status
