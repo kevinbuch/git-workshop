@@ -73,6 +73,14 @@ class Repository
     branch + changes
   end
 
+  def log
+    if commits.any?
+      "* #{commits.map(&:message).reverse.join "\n* "}"
+    else
+      ''
+    end
+  end
+
   def modified_files
     unstaged.select do |file|
       file.content != previous_commit_contents[file.path]

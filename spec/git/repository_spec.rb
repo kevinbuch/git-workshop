@@ -163,4 +163,22 @@ describe Repository do
       expect(repo.status).to include "nothing to commit"
     end
   end
+
+  describe '#log' do
+    it 'starts out empty' do
+      expect(repo.log).to be_empty
+    end
+
+    it 'shows a commit' do
+      file = repo.new_file '/file/path', 'content'
+      repo.add file
+      repo.commit 'first message'
+      file.content = 'new content'
+      repo.add file
+      repo.commit 'second message'
+
+      expect(repo.log).to include '* first message'
+      expect(repo.log).to include '* second message'
+    end
+  end
 end
