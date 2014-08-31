@@ -1,9 +1,8 @@
 class Repository
-  attr_accessor :owner, :branches, :commits, :working_directory, :name, :previous_commit_contents, :HEAD
+  attr_accessor :branches, :commits, :working_directory, :name, :previous_commit_contents, :HEAD
 
-  def initialize(name, owner)
+  def initialize(name)
     self.name = name
-    self.owner = owner
     self.branches = {:master => nil}
     self.HEAD = :master
     self.commits = []

@@ -1,11 +1,10 @@
 require 'spec_helper'
 
 describe Repository do
-  let(:repo) { Repository.new 'name', 'owner' }
+  let(:repo) { Repository.new 'name' }
 
-  it 'has an owner and a name' do
+  it 'has a name' do
     expect(repo.name).to eq 'name'
-    expect(repo.owner).to eq 'owner'
   end
 
   it 'starts with an empty list of commits and no files' do
