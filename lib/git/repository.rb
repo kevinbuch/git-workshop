@@ -31,19 +31,14 @@ class Repository
   end
 
   def commit(message)
-    tracked_files = staged + unstaged
-    contents = {}
-    tracked_files.map do |file|
-      contents[file.path] = file.content
-    end
+    save_all_tracked_file_contents
 
-    self.previous_commit_contents = contents
     commit = Git::Commit.new(staged, message)
     commits << commit
-    working_directory[:unstaged] = staged
-    working_directory[:staged] = []
-    commit.parents << branches[self.HEAD]
-    branches[self.HEAD] = commit
+
+    reset_staging_area
+    add_new_commit(commit)
+
     commit
   end
 
@@ -51,6 +46,11 @@ class Repository
     branch(branch_name) if options.include?(:b)
 
     self.HEAD = branch_name
+  end
+
+  def reset(new_sha)
+    new_commit = commits.find { |c| c.sha == new_sha }
+    branches[self.HEAD] = new_commit
   end
 
   def branch(name, *options)
@@ -103,5 +103,27 @@ class Repository
 
   def untracked
     working_directory[:untracked]
+  end
+
+  private
+
+  def reset_staging_area
+    working_directory[:unstaged] = staged
+    working_directory[:staged] = []
+  end
+
+  def add_new_commit(commit)
+    commit.parents << branches[self.HEAD]
+    branches[self.HEAD] = commit
+  end
+
+  def save_all_tracked_file_contents
+    tracked_files = staged + unstaged
+    contents = {}
+    tracked_files.each do |file|
+      contents[file.path] = file.content
+    end
+
+    self.previous_commit_contents = contents
   end
 end

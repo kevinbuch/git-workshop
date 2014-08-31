@@ -194,4 +194,19 @@ describe Repository do
       expect(repo.log).to include '* second message'
     end
   end
+
+  describe '#reset' do
+    it 'points the current branch to a specified commit' do
+      file = repo.new_file '/file/path', 'content'
+      repo.add file
+      first_commit = repo.commit 'first message'
+      file.content = 'new content'
+      repo.add file
+      repo.commit 'second message'
+
+      repo.reset(first_commit.sha)
+
+      expect(repo.branches[repo.HEAD]).to eq first_commit
+    end
+  end
 end

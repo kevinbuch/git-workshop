@@ -5,11 +5,12 @@ describe Git::Commit do
   let(:message)       { 'this is a commit' }
   let(:parent_commit) { double 'commit' }
 
-  it 'has a git tree and commit_message' do
+  it 'has a git tree, commit_message, and sha' do
     commit = Git::Commit.new tree, message
 
     expect(commit.tree).to eq tree
     expect(commit.message).to eq message
+    expect(commit.sha.length).to eq 7
   end
 
   it 'has a parent commit' do
