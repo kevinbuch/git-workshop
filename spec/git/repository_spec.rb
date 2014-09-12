@@ -3,11 +3,11 @@ require 'spec_helper'
 describe Repository do
   let(:repo) { Repository.new 'name' }
 
-  it 'has a name' do
+  xit 'has a name' do
     expect(repo.name).to eq 'name'
   end
 
-  it 'starts with an empty list of commits and no files' do
+  xit 'starts with an empty list of commits and no files' do
     expect(repo.commits).to be_empty
     expect(repo.staged).to be_empty
     expect(repo.unstaged).to be_empty
@@ -15,7 +15,7 @@ describe Repository do
   end
 
   describe '#add' do
-    it 'starts tracking files' do
+    xit 'starts tracking files' do
       file = repo.new_file '/file/path', 'content'
 
       expect(repo.staged.length).to be 0
@@ -29,19 +29,21 @@ describe Repository do
       expect(repo.untracked.length).to be 0
     end
 
-    it 'knows which files have been modified' do
+    xit 'knows which files have been modified' do
       file = repo.new_file '/file/path', 'content'
       repo.add file
       repo.commit 'commit message'
+
       file.content = 'new content'
 
       expect(repo.modified_files).to include file
     end
 
-    it 'stages a file' do
+    xit 'stages a file' do
       file = repo.new_file '/file/path', 'content'
       repo.add file
       repo.commit 'commit message'
+
       file.content = 'new content'
 
       expect(repo.staged.length).to be 0
@@ -57,19 +59,19 @@ describe Repository do
   end
 
   describe '#branch' do
-    it 'starts on a master branch that has no commits' do
+    xit 'starts on a master branch that has no commits' do
       expect(repo.HEAD).to eq :master
       expect(repo.branches[:master]).to be_nil
     end
 
-    it 'can create a new branch' do
+    xit 'can create a new branch' do
       repo.branch :feature
 
       expect(repo.branches).to include :master
       expect(repo.branches).to include :feature
     end
 
-    it 'can delete a branch with the :D option' do
+    xit 'can delete a branch with the :D option' do
       repo.branch :feature
       repo.branch :feature, :D
 
@@ -78,23 +80,26 @@ describe Repository do
   end
 
   describe '#commit' do
-    it 'records the contents of tracked files so it can determine when they are modified' do
+    xit 'records the contents of tracked files so it can determine when they are modified' do
       path = '/first/file'
-      repo.working_directory[:staged] = [Git::File.new(path, 'content')]
+      file = repo.new_file path, 'content'
+      repo.add file
       repo.commit 'commit message'
 
       expect(repo.previous_commit_contents[path]).to eq 'content'
     end
 
-    it 'keeps track of all commits' do
-      repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
+    xit 'keeps track of all commits' do
+      file = repo.new_file 'file/path', 'content'
+      repo.add file
       commit = repo.commit 'commit message'
 
       expect(repo.commits).to include commit
     end
 
-    it 'unstages files after the commit is created' do
-      repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
+    xit 'unstages files after the commit is created' do
+      file = repo.new_file 'file/path', 'content'
+      repo.add file
 
       expect(repo.staged.length).to be 1
       expect(repo.unstaged.length).to be 0
@@ -107,8 +112,9 @@ describe Repository do
       expect(repo.untracked.length).to be 0
     end
 
-    it 'adds commits to the current branch' do
-      repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
+    xit 'adds commits to the current branch' do
+      file = repo.new_file 'file/path', 'content'
+      repo.add file
       commit = repo.commit 'commit message'
 
       expect(repo.branches[:master]).to eq commit
@@ -117,10 +123,12 @@ describe Repository do
       expect(repo.branches[:master]).to eq newer_commit
     end
 
-    it 'keeps track of the parent commit' do
+    xit 'keeps track of the parent commit' do
       first_commit = double 'commit'
       repo.branches[:master] = first_commit
-      repo.working_directory[:staged] = [Git::File.new('file/path', 'content')]
+
+      file = repo.new_file 'file/path', 'content'
+      repo.add file
       second_commit = repo.commit 'commit message'
 
       expect(second_commit.parents).to include first_commit
@@ -128,14 +136,14 @@ describe Repository do
   end
 
   describe '#checkout' do
-    it 'changes the current branch' do
+    xit 'changes the current branch' do
       expect(repo.HEAD).to eq :master
       repo.branch :new_branch
       repo.checkout :new_branch
       expect(repo.HEAD).to eq :new_branch
     end
 
-    it 'can create a branch with the :b option' do
+    xit 'can create a branch with the :b option' do
       repo.checkout :new_branch, :b
       expect(repo.branches).to include :new_branch
       expect(repo.HEAD).to eq :new_branch
@@ -143,18 +151,18 @@ describe Repository do
   end
 
   describe '#status' do
-    it 'shows the current branch' do
+    xit 'shows the current branch' do
       expect(repo.status).to include 'On branch master'
       repo.branch :new_branch
       repo.checkout :new_branch
       expect(repo.status).to include 'On branch new_branch'
     end
 
-    it 'shows when the working directory is clean' do
+    xit 'shows when the working directory is clean' do
       expect(repo.status).to include 'nothing to commit, working directory clean'
     end
 
-    it 'shows the status files' do
+    xit 'shows the status files' do
       file1 = repo.new_file '/file1/path', 'content'
       file2 = repo.new_file '/file2/path', 'content'
       repo.add file1, file2
@@ -177,14 +185,15 @@ describe Repository do
   end
 
   describe '#log' do
-    it 'starts out empty' do
+    xit 'starts out empty' do
       expect(repo.log).to be_empty
     end
 
-    it 'shows a commit' do
+    xit 'shows a commit' do
       file = repo.new_file '/file/path', 'content'
       repo.add file
       repo.commit 'first message'
+
       file.content = 'new content'
       repo.add file
       repo.commit 'second message'
@@ -195,10 +204,11 @@ describe Repository do
   end
 
   describe '#reset' do
-    it 'points the current branch to a specified commit' do
+    xit 'points the current branch to a specified commit' do
       file = repo.new_file '/file/path', 'content'
       repo.add file
       first_commit = repo.commit 'first message'
+
       file.content = 'new content'
       repo.add file
       repo.commit 'second message'
